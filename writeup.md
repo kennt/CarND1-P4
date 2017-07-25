@@ -133,7 +133,7 @@ The radius of curvature calculations for a lane can be found in ```LaneFinder.ca
 
 For the curvature calculations, I use the polynomial for the curve, evaluate it in pixel space, and then fit it to a new curve in world space (meters).  We then find the new radius at the bottom of the image.
 
-The Vehicle Center calculation is an average of the left lane center and the right lane center (in pixel space). The difference this is from the center is then calculated and converted to world space (meters). The constants for the conversion from pixels (pixel space) to meters (world space) can be found in ```LaneFinder.__init__``` lines 40-45.
+The Vehicle Center calculation is an average of the left lane center and the right lane center (in pixel space). The difference this is from the center is then calculated and converted to world space (meters). The constants for the conversion from pixels (pixel space) to meters (world space) can be found in ```LaneFinder.__init__``` lines 18-23.
 
 These calculations can be found in:
 
@@ -207,3 +207,9 @@ There was nothing much that I could do here except to increase the number of ima
 This also took quite a while to determine how bad an image needs to be before rejecting.
 
 Doing some analysis may be useful to determine the allowable differences between the left and right lanes curvatures.
+
+#### 7. Curvature calculations
+
+My curvature calculations were higher than expected. After much experimentation, I found out that it was due to my perspective transform being a bit short, so my curves were straighter than expected (since I had less data with the dashed lines).  However, being able to see further ahead led to the algorithm being much more instable (especially in the bridge area and when the black car passed me).
+
+So I added a parallel calculation for the radius of curvature.  I basically do two perspective transforms, use one for the curvature and one for the lane detection.  A possible optimization of this would be to use one transform and have the lane calculations truncate the image to the size it expects, however I did not have time to try this out.
